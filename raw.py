@@ -4,12 +4,12 @@ import shutil
 from dateutil.parser import parse
 from subprocess import call
 
-DESTINATION_ROOT = '/Volumes/Pictures/testing/'
 SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/raw/'
+DESTINATION_ROOT = '/Volumes/Pictures/testing/'
 PHOTOGRAPHER     = 'JohnL'
 
-#DESTINATION_ROOT = '/Users/john/Desktop/output/'
 #SOURCE_ROOT      = '/Users/john/Desktop/photoRawExport/'
+#DESTINATION_ROOT = '/Users/john/Desktop/output/'
 
 def fixFilename(name):
     name = name.replace(' ','\ ')
@@ -17,18 +17,18 @@ def fixFilename(name):
     name = name.replace(')', '\)')
     return name
 
-def moveAndUpdate(path, filename, year, month, date, time):
+def moveAndUpdate(filename, year, month, date, time):
     destination = DESTINATION_ROOT + year + '/' + year + ' ' + month + '/' + PHOTOGRAPHER + '/other/'
     
-    shutil.copyfile(path + filename, destination + filename)
-    shutil.move(path + filename, path + 'done/' + filename) 
+    shutil.copyfile(SOURCE_ROOT + filename, destination + filename)
+    shutil.move(SOURCE_ROOT + filename, SOURCE_ROOT + 'done/' + filename) 
 
     command = 'SetFile -d "' + date + ' ' + time + '" ' + fixFilename(destination + filename)
     call(command, shell=True)
     command = 'SetFile -m "' + date + ' ' + time + '" ' + fixFilename(destination + filename)
     call(command, shell=True)
     
-def processFiles(data, path):
+def processFiles(data):
     for file in data:
         if 'createDate' in data[file]:
             date = data[file]['createDate']['date']
@@ -51,11 +51,11 @@ def processFiles(data, path):
     
             for filename in data[file]['files']:
                 print 'updating', filename, date, time
-                moveAndUpdate(path, filename, year, month, date, time)
+                moveAndUpdate(filename, year, month, date, time)
 
-def getCreateDate(path, data, filename, baseName):
-    if os.path.exists(path + filename):
-        f = open(path + filename, 'rb')
+def getCreateDate(data, filename, baseName):
+    if os.path.exists(SOURCE_ROOT + filename):
+        f = open(SOURCE_ROOT + filename, 'rb')
     else:
         print 'error'
         return
@@ -86,10 +86,10 @@ for filename in dirs:
         
     if (extension == '.xmp'):
         print 'processing', baseName + extension
-        data = getCreateDate(SOURCE_ROOT, data, filename, baseName)
+        data = getCreateDate(data, filename, baseName)
 
 # Create done directory where processed files will be moved to.
 if not os.path.exists(SOURCE_ROOT + 'done/'):
     os.makedirs(SOURCE_ROOT + 'done/')
 
-processFiles(data, SOURCE_ROOT)
+processFiles(data)
