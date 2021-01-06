@@ -8,9 +8,6 @@ SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/raw/'
 DESTINATION_ROOT = '/Volumes/Pictures/testing/'
 PHOTOGRAPHER     = 'JohnL'
 
-#SOURCE_ROOT      = '/Users/john/Desktop/photoRawExport/'
-#DESTINATION_ROOT = '/Users/john/Desktop/output/'
-
 def fixFilename(name):
     name = name.replace(' ','\ ')
     name = name.replace('(', '\(')
@@ -72,24 +69,28 @@ def getCreateDate(data, filename, baseName):
     data[baseName]['createDate'] = {'date':date, 'time':time, 'year':year, 'month':month}
     return data
 
-dirs = os.listdir(SOURCE_ROOT)
-data = {}
-for filename in dirs:
-    baseName, extension = os.path.splitext(filename)
-    if baseName in data:
-        if 'files' not in data[baseName]:
-            data[baseName]['files'] = [filename]
+def main():
+    dirs = os.listdir(SOURCE_ROOT)
+    data = {}
+    for filename in dirs:
+        baseName, extension = os.path.splitext(filename)
+        if baseName in data:
+            if 'files' not in data[baseName]:
+                data[baseName]['files'] = [filename]
+            else:
+                data[baseName]['files'].append(filename)
         else:
-            data[baseName]['files'].append(filename)
-    else:
-        data[baseName] = {'files':[filename]}
-        
-    if (extension == '.xmp'):
-        print 'processing', baseName + extension
-        data = getCreateDate(data, filename, baseName)
+            data[baseName] = {'files':[filename]}
+            
+        if (extension == '.xmp'):
+            print 'processing', baseName + extension
+            data = getCreateDate(data, filename, baseName)
+    
+    # Create done directory where processed files will be moved to.
+    if not os.path.exists(SOURCE_ROOT + 'done/'):
+        os.makedirs(SOURCE_ROOT + 'done/')
+    
+    processFiles(data)
 
-# Create done directory where processed files will be moved to.
-if not os.path.exists(SOURCE_ROOT + 'done/'):
-    os.makedirs(SOURCE_ROOT + 'done/')
-
-processFiles(data)
+if __name__ == '__main__':
+    main()
