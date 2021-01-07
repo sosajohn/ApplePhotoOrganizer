@@ -3,7 +3,7 @@ import os
 import shutil
 from subprocess import call
 
-SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/'
+SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/edited/'
 DESTINATION_ROOT = '/Volumes/Pictures/Pictures/'
 PHOTOGRAPHER     = 'JohnL'
 
@@ -75,7 +75,7 @@ def main():
     if not os.path.exists(SOURCE_ROOT + 'skipped/'):
         os.makedirs(SOURCE_ROOT + 'skipped/')
     
-    dirs = os.listdir(SOURCE_ROOT + '/edited/')
+    dirs = os.listdir(SOURCE_ROOT)
     for file in dirs:
         name, extension = os.path.splitext(file)
         print '*********************', name + extension
