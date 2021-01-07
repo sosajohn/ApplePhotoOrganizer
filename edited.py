@@ -1,46 +1,43 @@
-import pprint
 import exifread
 import os
 import shutil
 from subprocess import call
 
-DESTINATION_ROOT = '/Volumes/Pictures/testing/'
 SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/'
+DESTINATION_ROOT = '/Volumes/Pictures/Pictures/'
 PHOTOGRAPHER     = 'JohnL'
 
-def moveAndUpdate(path, name, extension, year, month, date, time):
-    epath = path + 'edited/'
+def moveAndUpdate(name, extension, year, month, date, time):
     if extension == '.jpeg':
         destination = DESTINATION_ROOT + year + '/' + year + ' ' + month + '/' + PHOTOGRAPHER + '/' + name + extension
         
-        print 'processing', epath + name + extension
-        print epath + name + extension + ' -> ' + destination
+        print 'processing', SOURCE_ROOT + name + extension
+        print SOURCE_ROOT + name + extension + ' -> ' + destination
         #return
     
-        shutil.copyfile(epath + name + extension, destination)
-        shutil.move(epath + name + extension, epath + 'done/' + name + extension) 
+        shutil.copyfile(SOURCE_ROOT + name + extension, destination)
+        shutil.move(SOURCE_ROOT + name + extension, SOURCE_ROOT + 'done/' + name + extension) 
         
         command = 'SetFile -d "' + date + ' ' + time + '" "' + destination + '"'
         call(command, shell=True)
         command = 'SetFile -m "' + date + ' ' + time + '" "' + destination + '"'
         call(command, shell=True)
     
-def updateFile(path, file, name):
-    epath = path + 'edited/'
-    f = open(epath + file, 'rb')
+def updateFile(file, name):
+    f = open(SOURCE_ROOT + file, 'rb')
     
     # Extract the create date and time tag from image
     try:
         tags = exifread.process_file(f)
     except:
         print 'error'
-        shutil.move(epath + file, epath + 'error/' + file)
+        shutil.move(SOURCE_ROOT + file, SOURCE_ROOT + 'error/' + file)
         f.close()
         return
     f.close()
 
     if 'EXIF DateTimeOriginal' not in tags:
-        shutil.move(path + file, path + 'skipped/' + file)        
+        shutil.move(SOURCE_ROOT + file, SOURCE_ROOT + 'skipped/' + file)        
         return
  
     originalDate = str(tags['EXIF DateTimeOriginal'])
@@ -65,11 +62,25 @@ def updateFile(path, file, name):
         os.makedirs(DESTINATION_ROOT + year + '/' + year + ' ' + month + '/' + PHOTOGRAPHER + '/other')
 
     # Update and move jpeg
-    moveAndUpdate(path, name, '.jpeg', year, month, date, time)
+    moveAndUpdate(name, '.jpeg', year, month, date, time)
+
+def main():
+    # Create done directory where processed files and files with errors will be moved to.
+    if not os.path.exists(SOURCE_ROOT + 'done/'):
+        os.makedirs(SOURCE_ROOT + 'done/')
     
-dirs = os.listdir(SOURCE_ROOT + '/edited/')
-for file in dirs:
-    name, extension = os.path.splitext(file)
-    print '*********************', name + extension
-    if (extension == '.jpeg'):
-        updateFile(SOURCE_ROOT, file, name)
+    if not os.path.exists(SOURCE_ROOT + 'error/'):
+        os.makedirs(SOURCE_ROOT + 'error/')
+    
+    if not os.path.exists(SOURCE_ROOT + 'skipped/'):
+        os.makedirs(SOURCE_ROOT + 'skipped/')
+    
+    dirs = os.listdir(SOURCE_ROOT + '/edited/')
+    for file in dirs:
+        name, extension = os.path.splitext(file)
+        print '*********************', name + extension
+        if (extension == '.jpeg'):
+            updateFile(file, name)
+
+if __name__ == '__main__':
+    main()

@@ -5,7 +5,7 @@ from dateutil.parser import parse
 from subprocess import call
 
 SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/raw/'
-DESTINATION_ROOT = '/Volumes/Pictures/testing/'
+DESTINATION_ROOT = '/Volumes/Pictures/Pictures/'
 PHOTOGRAPHER     = 'JohnL'
 
 def fixFilename(name):
