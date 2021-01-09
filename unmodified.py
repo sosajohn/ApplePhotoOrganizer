@@ -4,9 +4,9 @@ import shutil
 from dateutil.parser import parse
 from subprocess import call
 
-SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/raw/'
+SOURCE_ROOT      = '/Volumes/Pictures/Elein - 2021 01 07/unmodified/'
 DESTINATION_ROOT = '/Volumes/Pictures/Pictures/'
-PHOTOGRAPHER     = 'JohnL'
+PHOTOGRAPHER     = 'Elein'
 
 def fixFilename(name):
     name = name.replace(' ','\ ')

@@ -3,9 +3,9 @@ import os
 import shutil
 from subprocess import call
 
-SOURCE_ROOT      = '/Volumes/Pictures/John L - 2020 12 30/edited/'
+SOURCE_ROOT      = '/Volumes/Pictures/Elein - 2021 01 07/edited/'
 DESTINATION_ROOT = '/Volumes/Pictures/Pictures/'
-PHOTOGRAPHER     = 'JohnL'
+PHOTOGRAPHER     = 'Elein'
 
 def moveAndUpdate(name, extension, year, month, date, time):
     if extension == '.jpeg':
@@ -13,7 +13,6 @@ def moveAndUpdate(name, extension, year, month, date, time):
         
         print 'processing', SOURCE_ROOT + name + extension
         print SOURCE_ROOT + name + extension + ' -> ' + destination
-        #return
     
         shutil.copyfile(SOURCE_ROOT + name + extension, destination)
         shutil.move(SOURCE_ROOT + name + extension, SOURCE_ROOT + 'done/' + name + extension) 
